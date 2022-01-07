@@ -1,6 +1,8 @@
 package `in`.minbox.klox
 
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import kotlin.text.Charsets.UTF_8
 
 object Klox {
@@ -12,7 +14,18 @@ object Klox {
         } else if (args.size == 1) {
             runFile(args.get(0))
         } else {
-            // prompt
+            runPrompt()
+        }
+    }
+
+    private fun runPrompt() {
+        val input = InputStreamReader(System.`in`)
+        val reader = BufferedReader(input)
+
+        while (true) {
+            println("> ")
+            val line = reader.readLine() ?: break
+            process(line)
         }
     }
 
@@ -22,6 +35,8 @@ object Klox {
     }
 
     private fun process(input: String) {
-        println(input)
+        val scanner = Scanner(input)
+        val tokens = scanner.scanTokens()
+        println(tokens)
     }
 }
