@@ -6,10 +6,13 @@ import java.io.InputStreamReader
 import kotlin.text.Charsets.UTF_8
 
 object Klox {
+    var hadError = false
+
     @JvmStatic
     fun main(args: Array<String>) {
         if (args.size > 1) {
             println("Usage: klox [script]")
+            // https://www.freebsd.org/cgi/man.cgi?query=sysexits&apropos=0&sektion=0&manpath=FreeBSD+4.3-RELEASE&format=html
             System.exit(64)
         } else if (args.size == 1) {
             runFile(args.get(0))
@@ -26,17 +29,29 @@ object Klox {
             println("> ")
             val line = reader.readLine() ?: break
             process(line)
+            hadError = true
         }
     }
 
     private fun runFile(path: String) {
         val bytes = File(path).readBytes()
         process(String(bytes, UTF_8))
+        // Indicate an error in the exit code.
+        if (hadError) System.exit(65);
     }
 
     private fun process(input: String) {
         val scanner = Scanner(input)
         val tokens = scanner.scanTokens()
         println(tokens)
+    }
+
+    fun error(line: Int, message: String) {
+        report(line, "", message)
+    }
+
+    private fun report(line: Int, where: String, message: String) {
+        System.err.println("[line $line] Error$where: $message")
+        hadError = true;
     }
 }
