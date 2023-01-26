@@ -24,7 +24,7 @@ data class Grouping(val expr: Expr): Expr() {
     }
 }
 
-data class Literal(val value: Any): Expr() {
+data class Literal(val value: Any?): Expr() {
     override fun <T> accept(visitor: Visitor<T>): T {
         return visitor.visitLiteral(this)
     }

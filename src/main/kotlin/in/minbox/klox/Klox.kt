@@ -30,7 +30,6 @@ object Klox {
             println("> ")
             val line = reader.readLine() ?: break
             process(line)
-            hadError = true
         }
     }
 
@@ -44,11 +43,24 @@ object Klox {
     private fun process(input: String) {
         val scanner = Scanner(input)
         val tokens = scanner.scanTokens()
-        println(tokens)
+        val parser = Parser(tokens)
+        val expr = parser.parse()
+
+        if (hadError) return
+
+        println(AstPrinter().print(expr!!))
     }
 
     fun error(line: Int, message: String) {
         report(line, "", message)
+    }
+
+    fun error(token: Token, message: String) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
     }
 
     private fun report(line: Int, where: String, message: String) {
