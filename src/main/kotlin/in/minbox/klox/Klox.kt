@@ -7,7 +7,9 @@ import kotlin.system.exitProcess
 import kotlin.text.Charsets.UTF_8
 
 object Klox {
+    val interpreter: Interpreter = Interpreter()
     var hadError = false
+    var hadRuntimeError = false
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -38,6 +40,7 @@ object Klox {
         process(String(bytes, UTF_8))
         // Indicate an error in the exit code.
         if (hadError) exitProcess(65);
+        if (hadRuntimeError) exitProcess(70)
     }
 
     private fun process(input: String) {
@@ -49,6 +52,7 @@ object Klox {
         if (hadError) return
 
         println(AstPrinter().print(expr!!))
+        interpreter.interpret(expr)
     }
 
     fun error(line: Int, message: String) {
@@ -63,8 +67,13 @@ object Klox {
         }
     }
 
+    fun runtimeError(error: RuntimeError) {
+        System.err.println(error.message + "\n[line " + error.token.line + "]")
+        hadRuntimeError = true
+    }
+
     private fun report(line: Int, where: String, message: String) {
         System.err.println("[line $line] Error $where: $message")
-        hadError = true;
+        hadError = true
     }
 }
