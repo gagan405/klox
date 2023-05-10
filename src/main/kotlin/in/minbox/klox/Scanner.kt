@@ -7,7 +7,7 @@ class Scanner(val input: String) {
     private var current = 0
     private var line = 1
 
-    private val keywords = mapOf<String, TokenType>(
+    private val keywords = mapOf(
         "and"   to TokenType.AND,
         "class" to TokenType.CLASS,
         "else"  to TokenType.ELSE,

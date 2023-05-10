@@ -47,12 +47,11 @@ object Klox {
         val scanner = Scanner(input)
         val tokens = scanner.scanTokens()
         val parser = Parser(tokens)
-        val expr = parser.parse()
+        val statements = parser.parse()
 
         if (hadError) return
 
-        println(AstPrinter().print(expr!!))
-        interpreter.interpret(expr)
+        interpreter.interpret(statements)
     }
 
     fun error(line: Int, message: String) {

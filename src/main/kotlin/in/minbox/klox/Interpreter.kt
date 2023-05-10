@@ -1,12 +1,13 @@
 package `in`.minbox.klox
 
 
-class Interpreter : Visitor<Any> {
+class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
 
-    fun interpret(expression: Expr?) {
+    fun interpret(statements: List<Stmt>) {
         try {
-            val value = evaluate(expression!!)
-            println(stringify(value))
+            for (statement in statements) {
+                execute(statement)
+            }
         } catch (error: RuntimeError) {
             Klox.runtimeError(error)
         }
@@ -90,12 +91,25 @@ class Interpreter : Visitor<Any> {
         return Any()
     }
 
+    override fun visitExpressionStmt(expression: ExpressionStmt) {
+        evaluate(expression.expression)
+    }
+
+    override fun visitPrintStmt(printStmt: PrintStmt) {
+        val result = evaluate(printStmt.expression)
+        println(stringify(result))
+    }
+
     private fun isTruthy(item: Any?): Boolean {
         return when (item) {
             null -> false
             is Boolean -> item
             else -> true
         }
+    }
+
+    private fun execute(stmt: Stmt) {
+        stmt.accept(this)
     }
 
     private fun evaluate(expr: Expr): Any {
