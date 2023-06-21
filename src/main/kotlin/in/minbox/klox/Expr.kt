@@ -6,6 +6,7 @@ interface Visitor<out T> {
     fun visitGrouping(expr: Grouping) : T
     fun visitLiteral(expr: Literal) : T
     fun visitUnary(expr: Unary) : T
+    fun visitVariableExpr(expr: Variable): T
 }
 
 abstract class Expr {
@@ -33,5 +34,11 @@ data class Literal(val value: Any?): Expr() {
 data class Unary(val operator: Token, var right: Expr): Expr() {
     override fun <T> accept(visitor: Visitor<T>): T {
         return visitor.visitUnary(this)
+    }
+}
+
+data class Variable(val name: Token): Expr() {
+    override fun <T> accept(visitor: Visitor<T>): T {
+        return visitor.visitVariableExpr(this)
     }
 }

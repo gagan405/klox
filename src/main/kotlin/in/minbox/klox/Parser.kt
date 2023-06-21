@@ -1,6 +1,6 @@
 package `in`.minbox.klox
 
-class Parser(val tokens: List<Token>) {
+class Parser(private val tokens: List<Token>) {
     private class ParseError : RuntimeException()
 
     private var current = 0
@@ -8,9 +8,27 @@ class Parser(val tokens: List<Token>) {
     fun parse(): List<Stmt> {
         val statements = mutableListOf<Stmt>()
         while (!isAtEnd()) {
-            statements.add(statement())
+            val stmt = declaration()
+            stmt?.let { statements.add(stmt) }
         }
         return statements
+    }
+
+    private fun declaration(): Stmt? {
+        try {
+            if (match(TokenType.VAR)) return varDeclaration()
+            return statement()
+        } catch (e: ParseError) {
+            synchronize()
+            return null
+        }
+    }
+
+    private fun varDeclaration(): Stmt {
+        val token = consume(TokenType.IDENTIFIER, "Expect variable name.")
+        val initializer = if (match(TokenType.EQUAL)) expression() else null
+        consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+        return Var(token, initializer)
     }
 
     private fun statement(): Stmt {
@@ -87,11 +105,18 @@ class Parser(val tokens: List<Token>) {
         if (match(TokenType.FALSE)) return Literal(false)
         if (match(TokenType.TRUE)) return Literal(true)
         if (match(TokenType.NIL)) return Literal(null)
+        /**
+         * match() advances the counter by one. That means, we need to use previous()
+         * to build the expression. Same with Identifier.
+         */
         if (match(TokenType.NUMBER, TokenType.STRING)) return Literal(previous().literal)
-        if (match((TokenType.LEFT_PAREN))) {
+        if (match(TokenType.LEFT_PAREN)) {
             val expr = expression()
             consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return Grouping(expr)
+        }
+        if (match(TokenType.IDENTIFIER)) {
+            return Variable(previous())
         }
         throw error(peek(), "Expect expression.")
     }
@@ -132,7 +157,6 @@ class Parser(val tokens: List<Token>) {
                 return true
             }
         }
-
         return false
     }
 

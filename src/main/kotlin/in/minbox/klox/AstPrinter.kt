@@ -22,6 +22,10 @@ class AstPrinter : Visitor<String> {
         return parenthesize(expr.operator.lexeme, expr.right);
     }
 
+    override fun visitVariableExpr(expr: Variable): String {
+        return parenthesize("variable", expr)
+    }
+
     private fun parenthesize(name: String, vararg expressions: Expr): String {
         val sb = StringBuilder()
             .append("(")

@@ -91,6 +91,11 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
         return Any()
     }
 
+    override fun visitVariableExpr(expr: Variable): Any {
+        println(expr)
+        TODO("Not yet implemented")
+    }
+
     override fun visitExpressionStmt(expression: ExpressionStmt) {
         evaluate(expression.expression)
     }
@@ -98,6 +103,10 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
     override fun visitPrintStmt(printStmt: PrintStmt) {
         val result = evaluate(printStmt.expression)
         println(stringify(result))
+    }
+
+    override fun visitVarStmt(varStmt: Var) {
+        TODO("Not yet implemented")
     }
 
     private fun isTruthy(item: Any?): Boolean {
