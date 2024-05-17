@@ -28,4 +28,5 @@ It ends up with the error:
 has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version of the Java Runtime only recognizes class file versions up to 61.0
 ```
 
+
 To fix this, update the JDK through sdkman: `sdk install java`
