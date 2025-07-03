@@ -17,15 +17,55 @@ Use gradle to build the package:
 ./gradlew clean build
 ~~~
 
-**JDK errors**
+### JDK Version Errors & Gradle Build Issues
 
-If you have installed JDK and probably also have another copy of SDK through `sdkman`, you might get into trouble with gradle build.
-That's because the Gradle Test executor picks up the installation from sdkman - not sure why.
+If you have multiple JDK installations (for example, a system JDK and another managed by [SDKMAN!](https://sdkman.io/)), you might encounter errors like:
 
-It ends up with the error:
+has been compiled by a more recent version of the Java Runtime (class file version 65.0),
+this version of the Java Runtime only recognizes class file versions up to 61.0
 
+This happens because Gradle’s test executor or build process is running on an older JVM than the one used to compile your code.
+Common Causes
+
+* Your JAVA_HOME environment variable points to an older JDK.
+* SDKMAN or other version managers override JAVA_HOME or the java command in your shell.
+* Gradle daemon is running with an older JVM cached.
+
+#### How to Fix
+1. Use Gradle Toolchains (Recommended)
+
+Gradle supports toolchains which allow it to automatically find and use the correct JDK version for compiling and running tests — regardless of your system default JVM.
+
+Add this to your build.gradle.kts (or Groovy equivalent):
+
+```java
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21)) // Or your target Java version
+    }
+}
 ```
-has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version of the Java Runtime only recognizes class file versions up to 61.0
+
+```shell
+export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+export PATH="$JAVA_HOME/bin:$PATH"
 ```
 
-To fix this, update the JDK through sdkman: `sdk install java`
+Or explicitly to a version:
+
+`sdk use java 21.0.2-tem`
+
+2. Then restart your terminal and run:
+
+```shell
+./gradlew --stop  # Stop any running Gradle daemons
+./gradlew clean test
+```
+
+3. Verify Your Setup
+
+Check which Java version Gradle runs under:
+
+`./gradlew -version`
+
+Look for the Launcher JVM line — it should show your target JDK version.
