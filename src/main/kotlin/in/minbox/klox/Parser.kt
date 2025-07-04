@@ -160,25 +160,17 @@ class Parser(private val tokens: List<Token>) {
         return false
     }
 
-    private fun check(tokenType: TokenType): Boolean {
-        if (isAtEnd()) return false
-        return peek().type == tokenType
-    }
+    private fun check(tokenType: TokenType): Boolean =
+        !isAtEnd() && peek().type == tokenType
 
     private fun advance(): Token {
         if (!isAtEnd()) current++
         return previous()
     }
 
-    private fun isAtEnd(): Boolean {
-        return peek().type == TokenType.EOF
-    }
+    private fun isAtEnd(): Boolean = peek().type == TokenType.EOF
 
-    private fun peek(): Token {
-        return tokens[current]
-    }
+    private fun peek(): Token = tokens[current]
 
-    private fun previous(): Token {
-        return tokens[current - 1]
-    }
+    private fun previous(): Token = tokens[current - 1]
 }
