@@ -9,7 +9,7 @@ Kotlin is used here, instead of Java, just to get some more hands on practice an
 learning with the beautiful language.
 
 **Build and run**
-Uses `Java 21`. Make sure to have it [setup](https://stackoverflow.com/a/70296798/564503) through `jenv` if you are using
+Uses `Java 25`. Make sure to have it [setup](https://stackoverflow.com/a/70296798/564503) through `jenv` if you are using
 multiple versions.
 
 Use gradle to build the package:
@@ -41,7 +41,7 @@ Add this to your build.gradle.kts (or Groovy equivalent):
 ```java
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21)) // Or your target Java version
+        languageVersion.set(JavaLanguageVersion.of(25)) // Or your target Java version
     }
 }
 ```
@@ -53,7 +53,7 @@ export PATH="$JAVA_HOME/bin:$PATH"
 
 Or explicitly to a version:
 
-`sdk use java 21.0.2-tem`
+`sdk use java 25.0.2-tem`
 
 2. Then restart your terminal and run:
 
