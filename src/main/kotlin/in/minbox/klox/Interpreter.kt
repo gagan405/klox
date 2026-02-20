@@ -60,7 +60,7 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
             }
             TokenType.BANG_EQUAL -> return !isEqual(left, right)
             TokenType.EQUAL_EQUAL -> return isEqual(left, right)
-            else -> { }
+            else -> {}
         }
 
         // unreachable
@@ -85,7 +85,7 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
             }
             TokenType.PLUS -> return right
             TokenType.BANG -> return !isTruthy(right)
-            else -> { }
+            else -> {}
         }
         // unreachable
         return Any()
