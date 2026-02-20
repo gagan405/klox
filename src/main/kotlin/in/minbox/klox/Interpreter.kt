@@ -149,7 +149,7 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
         if (item is Double) {
             var text = item.toString()
             if (text.endsWith(".0")) {
-                text = text.substring(0, text.length - 2)
+                text = text.dropLast(2)
             }
             return text
         }

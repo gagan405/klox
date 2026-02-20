@@ -18,7 +18,7 @@ class Parser(private val tokens: List<Token>) {
         try {
             if (match(TokenType.VAR)) return varDeclaration()
             return statement()
-        } catch (e: ParseError) {
+        } catch (_: ParseError) {
             synchronize()
             return null
         }
