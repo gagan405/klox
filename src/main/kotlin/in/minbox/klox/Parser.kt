@@ -151,13 +151,14 @@ class Parser(private val tokens: List<Token>) {
     }
 
     private fun match(vararg tokenTypes: TokenType): Boolean {
-        tokenTypes.forEach {
+        return tokenTypes.any {
             if (check(it)) {
                 advance()
-                return true
+                true
+            } else {
+                false
             }
         }
-        return false
     }
 
     private fun check(tokenType: TokenType): Boolean =
