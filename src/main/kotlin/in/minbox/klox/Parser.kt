@@ -1,5 +1,6 @@
 package `in`.minbox.klox
 
+
 class Parser(private val tokens: List<Token>) {
     private class ParseError : RuntimeException()
 
@@ -28,7 +29,7 @@ class Parser(private val tokens: List<Token>) {
         val token = consume(TokenType.IDENTIFIER, "Expect variable name.")
         val initializer = if (match(TokenType.EQUAL)) expression() else null
         consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
-        return Var(token, initializer)
+        return Stmt.variable(token, initializer)
     }
 
     private fun statement(): Stmt {
@@ -39,17 +40,33 @@ class Parser(private val tokens: List<Token>) {
     private fun expressionStatement(): Stmt {
         val value = expression()
         consume(TokenType.SEMICOLON, "Expect ';' after value.")
-        return ExpressionStmt(value)
+        return Stmt.expression(value)
     }
 
     private fun printStatement(): Stmt {
         val value = expression()
         consume(TokenType.SEMICOLON, "Expect ';' after value.")
-        return PrintStmt(value)
+        return Stmt.print(value)
     }
 
     private fun expression(): Expr {
-        return equality()
+        return assignment()
+    }
+
+    private fun assignment(): Expr {
+        val expr = equality()
+
+        if (match(TokenType.EQUAL)) {
+            val equals = previous()
+            val value = assignment()
+
+            if (expr is Variable) {
+                return Assign(expr.name, value)
+            }
+
+            error(equals, "Invalid assignment target.")
+        }
+        return expr
     }
 
     private fun equality(): Expr {

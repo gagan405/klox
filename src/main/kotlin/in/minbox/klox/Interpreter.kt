@@ -1,7 +1,12 @@
 package `in`.minbox.klox
 
 
+object Nil {
+    override fun toString() = "nil"
+}
+
 class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
+    private val env = Environment()
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -73,7 +78,8 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
 
     override fun visitLiteral(expr: Literal): Any {
         if (expr.value is Int) return expr.value.toDouble()
-        return expr.value as Any
+        if (expr.value == null) return Nil
+        return expr.value
     }
 
     override fun visitUnary(expr: Unary): Any {
@@ -92,8 +98,7 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
     }
 
     override fun visitVariableExpr(expr: Variable): Any {
-        println(expr)
-        TODO("Not yet implemented")
+        return env[expr.name] ?: Nil
     }
 
     override fun visitExpressionStmt(expression: ExpressionStmt) {
@@ -106,13 +111,21 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
     }
 
     override fun visitVarStmt(varStmt: Var) {
-        TODO("Not yet implemented")
+        val value = varStmt.initializer?.let { evaluate(it) } ?: Nil
+        env.define(varStmt.name.lexeme, value)
+    }
+
+    override fun visitAssignExpr(expr: Assign): Any {
+        val value = evaluate(expr.value)
+        env.assign(expr.name, value)
+        return value
     }
 
     private fun isTruthy(item: Any?): Boolean {
         return when (item) {
             null -> false
             is Boolean -> item
+            is Nil -> false
             else -> true
         }
     }

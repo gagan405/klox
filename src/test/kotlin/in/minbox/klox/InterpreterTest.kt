@@ -32,4 +32,14 @@ class InterpreterTest {
         val v = statements[0]
         assertEquals(Var(Token(TokenType.IDENTIFIER, "x", null, 1), Literal(2.0)), v)
     }
+
+    @Test
+    fun printStatement() {
+        val program = "print true;"
+        val scanner = Scanner(program)
+        val tokens = scanner.scanTokens()
+        val parser = Parser(tokens)
+        val statements = parser.parse()
+        println(statements)
+    }
 }

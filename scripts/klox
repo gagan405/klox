@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Repo root (parent of scripts/)
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+# Build the install layout if needed; -q and plain console avoid Gradle’s live progress UI.
+./gradlew -q --console=plain installDist
+
+exec "$ROOT/build/install/klox/bin/klox" "$@"

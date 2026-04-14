@@ -7,6 +7,12 @@ abstract class Stmt {
         fun visitVarStmt(varStmt: Var): T
     }
     abstract fun <T> accept(visitor: Visitor<T>) : T
+
+    companion object {
+        fun print(expression: Expr): Stmt = PrintStmt(expression)
+        fun expression(expression: Expr): Stmt = ExpressionStmt(expression)
+        fun variable(name: Token, initializer: Expr?): Stmt = Var(name, initializer)
+    }
 }
 
 data class PrintStmt(val expression: Expr): Stmt() {

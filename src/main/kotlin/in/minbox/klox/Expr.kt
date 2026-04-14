@@ -2,6 +2,7 @@ package `in`.minbox.klox
 
 
 interface Visitor<out T> {
+    fun visitAssignExpr(expr: Assign): T
     fun visitBinary(expr: Binary) : T
     fun visitGrouping(expr: Grouping) : T
     fun visitLiteral(expr: Literal) : T
@@ -13,6 +14,11 @@ abstract class Expr {
     abstract fun <T> accept(visitor: Visitor<T>): T
 }
 
+data class Assign(val name: Token, val value: Expr) : Expr() {
+    override fun <T> accept(visitor: Visitor<T>): T {
+        return visitor.visitAssignExpr(this)
+    }
+}
 data class Binary(val left: Expr,  val operator: Token, val right: Expr): Expr() {
     override fun <T> accept(visitor: Visitor<T>): T {
         return visitor.visitBinary(this)

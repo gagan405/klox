@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.JavaExec
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -57,4 +58,8 @@ java {
 
 application {
     mainClass.set("in.minbox.klox.Klox")
+}
+
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
 }
