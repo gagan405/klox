@@ -62,7 +62,7 @@ Or explicitly to a version:
 ./gradlew clean test
 ```
 
-3. Verify Your Setup
+3. Verify your setup
 
 Check which Java version Gradle runs under:
 
