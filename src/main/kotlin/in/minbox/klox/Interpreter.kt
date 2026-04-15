@@ -6,7 +6,7 @@ object Nil {
 }
 
 class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
-    private val env = Environment()
+    private var env = Environment()
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -115,6 +115,10 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
         env.define(varStmt.name.lexeme, value)
     }
 
+    override fun visitBlockStmt(block: BlockStmt) {
+        executeBlock(block.statements, Environment(env));
+    }
+
     override fun visitAssignExpr(expr: Assign): Any {
         val value = evaluate(expr.value)
         env.assign(expr.name, value)
@@ -167,5 +171,23 @@ class Interpreter : Visitor<Any>, Stmt.Visitor<Unit> {
             return text
         }
         return item.toString()
+    }
+
+    private fun executeBlock(statements: List<Stmt>, environment: Environment) {
+        withEnvironment(environment) {
+            for (stmt in statements) {
+                execute(stmt)
+            }
+        }
+    }
+
+    private inline fun <T> withEnvironment(environment: Environment, block: () -> T): T {
+        val previous = env
+        try {
+            env = environment
+            return block()
+        } finally {
+            env = previous
+        }
     }
 }

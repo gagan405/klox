@@ -34,7 +34,18 @@ class Parser(private val tokens: List<Token>) {
 
     private fun statement(): Stmt {
         if (match(TokenType.PRINT)) return printStatement()
+        if (match(TokenType.LEFT_BRACE)) return BlockStmt(block())
         return expressionStatement()
+    }
+
+    private fun block(): List<Stmt> {
+        val list = mutableListOf<Stmt>()
+        while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+            val stmt = declaration()
+            stmt?.let { list.add(stmt) }
+        }
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after block.")
+        return list
     }
 
     private fun expressionStatement(): Stmt {

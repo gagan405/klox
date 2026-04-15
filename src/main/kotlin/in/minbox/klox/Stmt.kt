@@ -5,6 +5,7 @@ abstract class Stmt {
         fun visitExpressionStmt(expression: ExpressionStmt): T
         fun visitPrintStmt(printStmt: PrintStmt): T
         fun visitVarStmt(varStmt: Var): T
+        fun visitBlockStmt(block: BlockStmt): T
     }
     abstract fun <T> accept(visitor: Visitor<T>) : T
 
@@ -37,4 +38,10 @@ data class Var(val name: Token, val initializer: Expr?): Stmt() {
         return visitor.visitVarStmt(this)
     }
 
+}
+
+data class BlockStmt(val statements: List<Stmt>): Stmt() {
+    override fun <T> accept(visitor: Visitor<T>): T {
+        return visitor.visitBlockStmt(this)
+    }
 }
